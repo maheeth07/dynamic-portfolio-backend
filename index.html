@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload Test</title>
+</head>
+<body>
+    <h1>Upload Image</h1>
+    <form action="/api/gallery/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    <h2>Uploaded Images</h2>
+    <div id="gallery"></div>
+
+    <script>
+        async function fetchGallery() {
+            const response = await fetch('/api/gallery');
+            const images = await response.json();
+            const galleryDiv = document.getElementById('gallery');
+            galleryDiv.innerHTML = '';
+            images.forEach(image => {
+                const imgElement = document.createElement('img');
+                imgElement.src = `/uploads/${image.filename}`;
+                imgElement.width = 200;
+                galleryDiv.appendChild(imgElement);
+            });
+        }
+
+        // Fetch gallery on page load
+        fetchGallery();
+    </script>
+</body>
+</html>
