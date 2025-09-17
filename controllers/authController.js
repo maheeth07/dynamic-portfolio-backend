@@ -1,4 +1,11 @@
-const Admin = require("../models/admin.model.js");
+const Admin = require("../models/admin.model");
+const jwt = require("jsonwebtoken");
+
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET || "secret", {
+    expiresIn: "1d",
+  });
+};
 
 const registerAdmin = async (req, res) => {
   try {
@@ -10,7 +17,12 @@ const registerAdmin = async (req, res) => {
     }
 
     const admin = await Admin.create({ name, password });
-    res.status(201).json({ message: "Admin created successfully", id: admin._id });
+
+    res.status(201).json({
+      message: "Admin created successfully",
+      id: admin._id,
+      token: generateToken(admin._id),
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -21,16 +33,15 @@ const loginAdmin = async (req, res) => {
     const { name, password } = req.body;
 
     const admin = await Admin.findOne({ name });
-    if (!admin) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
+    if (!admin) return res.status(400).json({ message: "Invalid credentials" });
 
     const isMatch = await admin.matchPassword(password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-    res.status(200).json({ message: "Login successful" });
+    res.status(200).json({
+      message: "Login successful",
+      token: generateToken(admin._id),
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
