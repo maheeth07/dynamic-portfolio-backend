@@ -70,7 +70,7 @@ const updateSection = async (req, res) => {
        section.section_title = section_title ? section_title : section.section_title;
        section.section_description = section_description ? section_description : section.section_description;
        const updatedPage = await page.save();
-        res.status(200).json(updatedPage);
+        res.status(200).json(section);
     } catch (error) {
         res.status(500).json("ERROR AT SECTION CONTROLLER", error.message);
     }
