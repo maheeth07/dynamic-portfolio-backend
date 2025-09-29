@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState("")
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -29,19 +29,24 @@ export default function AdminLogin() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: email, password }),
+        body: JSON.stringify({ name: username, password }),
       })
+
+      console.log("Login API response status:", response.status);
 
       if (response.ok) {
         const data = await response.json()
+        console.log("Login successful, received data:", data);
         localStorage.setItem("adminToken", data.token)
+        console.log("Token stored, redirecting...");
         router.push("/admin")
       } else {
-        // Handle login failure
-        console.error("Login failed")
+        console.error("Login failed with status:", response.status);
+        const errorData = await response.json();
+        console.error("Login error details:", errorData);
       }
     } catch (error) {
-      console.error("An error occurred:", error)
+      console.error("An error occurred during login fetch:", error);
     } finally {
       setIsLoading(false)
     }
@@ -65,19 +70,19 @@ export default function AdminLogin() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-                Email address
+              <Label htmlFor="username" className="text-sm font-medium text-gray-700">
+                Username
               </Label>
               <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
+                id="username"
+                name="username"
+                type="text"
+                autoComplete="username"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="mt-1"
-                placeholder="Enter your email"
+                placeholder="Enter your username"
               />
             </div>
 
