@@ -4,3 +4,5 @@ node_modules
 client/node_modules
 client/.next
 client/out
+
+CMS-main/
